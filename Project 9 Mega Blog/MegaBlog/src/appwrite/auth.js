@@ -17,6 +17,7 @@ export class AuthService {
             const userAccount = await this.account.create(ID.unique(),email,password,name)
             if(userAccount) {
                 //call another Method (Direct login Kara denge)
+                return this.login({email,password});
             }
             else{
                 return userAccount;
@@ -27,8 +28,38 @@ export class AuthService {
         }
     }
 
+    async login({email,password}){
+        try{
+            return await this.account.createEmailPasswordSession(email,password);
+        }
+        catch (error){
+            throw error;
+        }
+    }
+
+    async getCurrentUser(){
+        try{
+            return await this.account.get();
+        }
+        catch (error){
+            console.log("Appwrite service :: getCurrentUser :: error", error);
+        }
+
+        return null;
+
+    }
+
+    async logout(){
+        try {
+            await this.account.deleteSession();
+        } catch (error) {
+            console.log("Appwrite service :: deleteSession :: error in LogOut", error);
+        }
+    }
 
 }
+
+
 
 const authService = new AuthService();
 
